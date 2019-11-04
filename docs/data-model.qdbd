@@ -1,0 +1,69 @@
+# Modify this code to update the DB schema diagram.
+# To reset the sample schema, replace everything with
+# two dots ('..' - without quotes).
+
+Runs
+----
+id PK int IDENTITY AUTOINCREMENT
+appVersion string FK >- ApplicationVersions.checksum
+configVersion string FK >- ConfigurationVersions.checksum
+startTs timestamp
+endTs timestamp NULL
+exitStatus int NULL
+
+ApplicationVersions
+----
+checksum PK string
+version string
+
+ConfigurationVersions
+----
+checksum PK int
+
+Platforms
+----
+id PK int IDENTITY AUTOINCREMENT
+name string
+
+PlatformAPIs
+----
+id PK int IDENTITY AUTOINCREMENT
+platformId int FK >- Platforms.id
+apiVersion string
+apiType string
+apiUrl url
+
+Credentials
+----
+checksum PK string
+targetPlatformAPI int FK >- PlatformAPIs.id
+principal string NULL
+token string
+
+Calls
+----
+id PK int IDENTITY AUTOINCREMENT
+runId int FK >- Runs.id
+materializedScenarioId int FK >- MaterializedScenarios.id
+startTs timestamp
+endTs timestamp NULL
+responseStatus int NULL
+
+Scenarios
+----
+id PK int IDENTITY AUTOINCREMENT
+content json
+
+MaterializedScenarios
+----
+id PK int IDENTITY AUTOINCREMENT
+scenarioId int FK >- Scenarios.id
+platformAPI int FK >- PlatformAPIs.id
+credentials string FK >- Credentials.checksum
+checksum string
+
+Repositories
+----
+id PK int IDENTITY AUTOINCREMENT
+callId int FK >- Calls.id
+rawResponse json
